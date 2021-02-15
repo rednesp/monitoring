@@ -2,7 +2,8 @@
 from unittest.mock import PropertyMock, patch
 from io import StringIO
 import json
-from hparray import discover_logical, discover_physical
+from hparray import (discover_logical, discover_physical, get_logical, 
+                     get_physical)
 
 HPSSACLI_OUTPUT = """
 Smart Array P410i in Slot 0 (Embedded)    (sn: 50123456789ABCDE)
@@ -46,3 +47,38 @@ def test_discover_physical(run_mock):
         {"{#DISK}": "1I:1:5"}, {"{#DISK}": "1I:1:6"}, {"{#DISK}": "2I:1:1"},
         {"{#DISK}": "2I:1:2"}, {"{#DISK}": "2I:1:3"}, {"{#DISK}": "2I:1:4"}
     ]})
+
+@patch('hparray.run')
+def test_get_logical1(run_mock):
+    """Test method that get the status of an array"""
+    type(run_mock.return_value).stdout = PropertyMock(return_value=HPSSACLI_OUTPUT)
+    result = get_logical('1')
+    assert result == 1
+
+@patch('hparray.run')
+def test_get_logical2(run_mock):
+    """Test method that get the status of an array"""
+    type(run_mock.return_value).stdout = PropertyMock(return_value=HPSSACLI_OUTPUT)
+    result = get_logical('2')
+    assert result == -1
+
+@patch('hparray.run')
+def test_get_physical1(run_mock):
+    """Test method that get the status of a disk"""
+    type(run_mock.return_value).stdout = PropertyMock(return_value=HPSSACLI_OUTPUT)
+    result = get_physical('1I:1:6')
+    assert result == 1
+
+@patch('hparray.run')
+def test_get_physical2(run_mock):
+    """Test method that get the status of a disk"""
+    type(run_mock.return_value).stdout = PropertyMock(return_value=HPSSACLI_OUTPUT)
+    result = get_physical('2I:1:3')
+    assert result == 0
+
+@patch('hparray.run')
+def test_get_physical3(run_mock):
+    """Test method that get the status of a disk"""
+    type(run_mock.return_value).stdout = PropertyMock(return_value=HPSSACLI_OUTPUT)
+    result = get_physical('2I:1:7')
+    assert result == -1
