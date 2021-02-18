@@ -12,6 +12,7 @@ def run_hpssacli():
                   universal_newlines=True, check=True, stdout=PIPE)
     return process.stdout.split('\n')
 
+
 def discover(key):
     """Run the HP application and get the 'key' objects (logical or physical)
     drives"""
@@ -22,17 +23,20 @@ def discover(key):
             result.append(line[position:].split()[1])
     return result
 
+
 def discover_logical():
     """Discover the logical drives"""
     return json.dumps(
         {'data': [{"{#ARRAY}": value} for value in discover('logicaldrive')]}
     )
 
+
 def discover_physical():
     """Discover the physical drives"""
     return json.dumps(
         {'data': [{"{#DISK}": value} for value in discover('physicaldrive')]}
     )
+
 
 def get(key, num):
     """Run the application and find the status of the object"""
@@ -46,6 +50,7 @@ def get(key, num):
                 return 0
     return -1
 
+
 def get_logical(num_array):
     """Get the status of an array"""
     return get('logicaldrive', num_array)
@@ -55,9 +60,11 @@ def get_physical(num_disk):
     """Get the status of a disk"""
     return get('physicaldrive', num_disk)
 
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        sys.exit(f'Missing parameter. Usage: ${sys.argv[0]} <physical or logical> [num]')
+        sys.exit(f'Missing parameter. Usage: ${sys.argv[0]}'
+                 ' <physical or logical> [num]')
     if sys.argv[1] == 'logical':
         if len(sys.argv) > 2:
             retcode = get_logical(sys.argv[2])
