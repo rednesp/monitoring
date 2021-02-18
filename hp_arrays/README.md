@@ -10,6 +10,7 @@ To use this software, follow this steps:
 - copy `hparray.py` to your server (recommended location is `/etc/zabbix/scripts`);
 - copy `hparray.conf` to Zabbix agent configuration folder (usually `/etc/zabbix/zabbix_agentd.conf.d`) or paste its contents at the end of the
 configuration file;
+- restart zabbix agent;
 - copy `zabbix_hp_array` to your `sudoers` configuration folder;
 - in Zabbix interface, import `disk_value_maps.xml` and `hp_array_template.xml`;
 - link the template `Template HP array` to your host.
