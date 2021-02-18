@@ -4,7 +4,7 @@ with Zabbix"""
 import json
 try:
     from subprocess import run, PIPE
-    check_output = None # pylint: disable=invalid-name
+    check_output = None  # pylint: disable=invalid-name
 except ImportError:
     from subprocess import check_output, PIPE
     run = None
@@ -35,15 +35,17 @@ DISK_STATUS = {
     'Rebuilding (RBLD)': 10
 }
 
+
 def run_sas2ircu():
     """Run the Intel application to get information from the raid array"""
     if run is None:
         output = check_output(["/usr/sbin/sas2ircu", "0", "display"],
-                  universal_newlines=True)
+                              universal_newlines=True)
     else:
         output = run(["/usr/sbin/sas2ircu", "0", "display"],
                      universal_newlines=True, check=True, stdout=PIPE).stdout
     return output.split('\n')
+
 
 def discover_logical():
     """Discover the arrays"""
@@ -54,6 +56,7 @@ def discover_logical():
     return json.dumps(
         {'data': [{"{#ARRAY}": value} for value in arrays]}
     )
+
 
 def discover_physical():
     """Discover the physical disks"""
@@ -72,8 +75,9 @@ def discover_physical():
             found = False
     return json.dumps(
         {'data': [{'{#ENCLOSURE}': enc, '{#SLOT}': slot}
-        for enc, slot in disks]}
+         for enc, slot in disks]}
     )
+
 
 def get_logical(num_array):
     """Get the status of an array"""
@@ -88,6 +92,7 @@ def get_logical(num_array):
             status = line.split(': ')[1]
             break
     return RAID_STATUS[status]
+
 
 def get_physical(num_disk):
     """Get the status of a disk"""
@@ -110,9 +115,11 @@ def get_physical(num_disk):
             break
     return DISK_STATUS[status]
 
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        sys.exit('Missing parameter. Usage: %s <physical or logical> [num]' % sys.argv[0])
+        sys.exit('Missing parameter. Usage: %s'
+                 '<physical or logical> [num]' % sys.argv[0])
     if sys.argv[1] == 'logical':
         if len(sys.argv) > 3:
             retcode = get_logical(sys.argv[2:4])

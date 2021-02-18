@@ -1,8 +1,9 @@
 """Test the application"""
 from unittest.mock import PropertyMock, patch
+import pytest
 import json
 from intelarray import (discover_logical, discover_physical, get_logical,
-                     get_physical)
+                        get_physical)
 
 SAS2IRCU_OUTPUT = """
 LSI Corporation SAS2 IR Configuration Utility.
@@ -112,54 +113,67 @@ SAS2IRCU: Utility Completed Successfully.
     """
 
 
+@pytest.fixture
+def default_output():
+    return PropertyMock(return_value=SAS2IRCU_OUTPUT)
+
+
 @patch('intelarray.run')
-def test_discover_logical(run_mock):
+def test_discover_logical(run_mock, default_output):
     """Test method that discover logical drives (arrays)"""
-    type(run_mock.return_value).stdout = PropertyMock(return_value=SAS2IRCU_OUTPUT)
+    type(run_mock.return_value).stdout = default_output
     result = discover_logical()
     assert result == json.dumps({'data': [{"{#ARRAY}": "328"}]})
 
-@patch('intelarray.run')
-def test_discover_physical(run_mock):
-    """Test method that discover physical drives"""
-    type(run_mock.return_value).stdout = PropertyMock(return_value=SAS2IRCU_OUTPUT)
-    result = discover_physical()
-    assert result == json.dumps({'data': [
-        {"{#ENCLOSURE}": "0", "{#SLOT}": "0"}, {"{#ENCLOSURE}": "1", "{#SLOT}": "0"},
-        {"{#ENCLOSURE}": "1", "{#SLOT}": "1"}, {"{#ENCLOSURE}": "1", "{#SLOT}": "2"}
-    ]})
 
 @patch('intelarray.run')
-def test_get_logical1(run_mock):
+def test_discover_physical(run_mock, default_output):
+    """Test method that discover physical drives"""
+    type(run_mock.return_value).stdout = default_output
+    result = discover_physical()
+    assert result == json.dumps({'data': [
+        {"{#ENCLOSURE}": "0", "{#SLOT}": "0"},
+        {"{#ENCLOSURE}": "1", "{#SLOT}": "0"},
+        {"{#ENCLOSURE}": "1", "{#SLOT}": "1"},
+        {"{#ENCLOSURE}": "1", "{#SLOT}": "2"}
+    ]})
+
+
+@patch('intelarray.run')
+def test_get_logical1(run_mock, default_output):
     """Test method that get the status of an array"""
-    type(run_mock.return_value).stdout = PropertyMock(return_value=SAS2IRCU_OUTPUT)
+    type(run_mock.return_value).stdout = default_output
     result = get_logical('328')
     assert result == 3
 
+
 @patch('intelarray.run')
-def test_get_logical2(run_mock):
+def test_get_logical2(run_mock, default_output):
     """Test method that get the status of an array"""
-    type(run_mock.return_value).stdout = PropertyMock(return_value=SAS2IRCU_OUTPUT)
+    type(run_mock.return_value).stdout = default_output
     result = get_logical('2')
     assert result == -1
 
+
 @patch('intelarray.run')
-def test_get_physical1(run_mock):
+def test_get_physical1(run_mock, default_output):
     """Test method that get the status of a disk"""
-    type(run_mock.return_value).stdout = PropertyMock(return_value=SAS2IRCU_OUTPUT)
+    type(run_mock.return_value).stdout = default_output
     result = get_physical(('0', '0'))
     assert result == 3
 
+
 @patch('intelarray.run')
-def test_get_physical2(run_mock):
+def test_get_physical2(run_mock, default_output):
     """Test method that get the status of a disk"""
-    type(run_mock.return_value).stdout = PropertyMock(return_value=SAS2IRCU_OUTPUT)
+    type(run_mock.return_value).stdout = default_output
     result = get_physical(('1', '2'))
     assert result == 1
 
+
 @patch('intelarray.run')
-def test_get_physical3(run_mock):
+def test_get_physical3(run_mock, default_output):
     """Test method that get the status of a disk"""
-    type(run_mock.return_value).stdout = PropertyMock(return_value=SAS2IRCU_OUTPUT)
+    type(run_mock.return_value).stdout = default_output
     result = get_physical(('1', '3'))
     assert result == -1
