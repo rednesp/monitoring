@@ -121,8 +121,8 @@ if __name__ == '__main__':
         sys.exit('Missing parameter. Usage: %s'
                  '<physical or logical> [num]' % sys.argv[0])
     if sys.argv[1] == 'logical':
-        if len(sys.argv) > 3:
-            retcode = get_logical(sys.argv[2:4])
+        if len(sys.argv) > 2:
+            retcode = get_logical(sys.argv[2])
         else:
             retcode = discover_logical()
     elif sys.argv[1] == 'physical':
