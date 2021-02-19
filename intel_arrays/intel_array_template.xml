@@ -60,7 +60,7 @@
                             <type>0</type>
                             <snmp_community/>
                             <snmp_oid/>
-                            <key>hp.status.array[{#ARRAY}]</key>
+                            <key>intel.status.array[{#ARRAY}]</key>
                             <delay>1m</delay>
                             <history>90d</history>
                             <trends>365d</trends>
