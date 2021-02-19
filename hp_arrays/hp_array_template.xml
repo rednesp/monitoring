@@ -123,7 +123,7 @@
                             <expression>{Template HP array:hp.status.array[{#ARRAY}].last()}&lt;&gt;1</expression>
                             <recovery_mode>0</recovery_mode>
                             <recovery_expression/>
-                            <name>Array {#DISK} not ok</name>
+                            <name>Array {#ARRAY} not ok</name>
                             <correlation_mode>0</correlation_mode>
                             <correlation_tag/>
                             <url/>
