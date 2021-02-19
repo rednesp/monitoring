@@ -2,13 +2,19 @@
 """Module to discover HP array items and monitor them
 with Zabbix"""
 import json
+import os.path
 from subprocess import run, PIPE
 import sys
+
+if os.path.exists('/usr/sbin/hpssacli'):
+    SSA_CMD = '/usr/sbin/hpssacli'
+else:
+    SSA_CMD = '/usr/sbin/ssacli'
 
 
 def run_hpssacli():
     """Run the HP application and return a list of lines"""
-    process = run(["/usr/sbin/hpssacli", "ctrl", "all", "show", "config"],
+    process = run([SSA_CMD, "ctrl", "all", "show", "config"],
                   universal_newlines=True, check=True, stdout=PIPE)
     return process.stdout.split('\n')
 
